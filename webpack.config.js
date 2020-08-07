@@ -7,7 +7,7 @@ const { GenerateSW } = require("workbox-webpack-plugin");
 
 module.exports = {
   entry: "./web/src/index.js",
-  mode: "production",
+  mode: "development",
   output: {
     filename: "[hash].main.js",
     path: path.resolve(__dirname, "build"),

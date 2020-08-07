@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import loadable from "@loadable/component";
 import Spin from "antd/es/spin";
 
 import "antd/es/spin/style/index.css";
 
-const Home = ({ path }) => {
-  const [component, setComponent] = useState(null);
-
-  useEffect(() => {
-    import(`../components/${path}`).then(({ default: c }) => setComponent(c));
-  }, [path]);
-
-  if (!component) {
-    return (
+const loader = (name) =>
+  loadable(() => import(`../components/${name}`), {
+    fallback: (
       <Spin size="large">
         <div
           style={{
@@ -20,8 +15,7 @@ const Home = ({ path }) => {
           }}
         />
       </Spin>
-    );
-  }
-  return component;
-};
-export default Home;
+    ),
+  });
+
+export default loader;

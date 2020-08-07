@@ -7,19 +7,15 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import Loader from "./services/Loader";
+import loader from "./services/Loader";
 
 import "./style.css";
 
 const App = () => (
   <Router>
     <Switch>
-      <Route path="/home">
-        <Loader path="Home" />
-      </Route>
-      <Route path="/login">
-        <Loader path="Login" />
-      </Route>
+      <Route path="/home" component={loader("Home")} />
+      <Route path="/login" component={loader("Login")} />
       <Route path="/" exact>
         <Redirect to="/home" />
       </Route>

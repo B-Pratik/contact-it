@@ -4,7 +4,7 @@
   "description": "contacts management application",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode=production",
     "watch": "webpack-dev-server",
     "start": "node index.js"
   },
@@ -63,6 +63,7 @@
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
+    "@loadable/component": "^5.13.1",
     "antd": "^4.5.2",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
@@ -82,6 +83,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "style-loader": "^1.2.1",
+    "vcf": "^2.1.0",
     "webpack": "^4.44.0",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-cli": "^3.3.12",
