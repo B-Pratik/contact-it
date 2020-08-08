@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
 import VCard from "vcf";
 import Button from "antd/es/button";
 import UploadOutlined from "@ant-design/icons/es/icons/UploadOutlined";
@@ -44,6 +45,9 @@ const Home = () => {
         ref={uploadInput}
         style={{ display: "none" }}
       />
+      <p>
+        <Link to="/login">Login</Link>
+      </p>
     </>
   );
 };

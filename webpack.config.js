@@ -41,7 +41,7 @@ module.exports = {
       favicon: "./web/assets/favicon.ico",
     }),
     new GenerateSW(),
-    //new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
   devServer: {
     contentBase: path.join(__dirname, "build"),
