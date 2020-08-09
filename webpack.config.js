@@ -37,10 +37,12 @@ module.exports = {
       template: "./index.html",
       inject: "body",
       scriptLoading: "defer",
-      hash: true,
       favicon: "./web/assets/favicon.ico",
     }),
-    new GenerateSW(),
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
     // new BundleAnalyzerPlugin(),
   ],
   devServer: {

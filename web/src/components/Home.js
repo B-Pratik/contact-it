@@ -46,7 +46,7 @@ const Home = () => {
         style={{ display: "none" }}
       />
       <p>
-        <Link to="/login">Login</Link>
+        <Link to="/product">Product</Link>
       </p>
     </>
   );
