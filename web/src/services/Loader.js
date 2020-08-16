@@ -1,21 +1,10 @@
-import React from "react";
-import loadable from "@loadable/component";
-import Spin from "antd/es/spin";
-
-import "antd/es/spin/style/index.css";
+import loadable from "react-loadable";
+import Loading from "./Loading";
 
 const loader = (name) =>
-  loadable(() => import(`../components/${name}`), {
-    fallback: (
-      <Spin size="large">
-        <div
-          style={{
-            height: "100vh",
-            width: "100vw",
-          }}
-        />
-      </Spin>
-    ),
+  loadable({
+    loader: () => import(`../components/${name}`),
+    loading: Loading,
   });
 
 export default loader;

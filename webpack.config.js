@@ -17,7 +17,11 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { importLoaders: 1 } },
+          "postcss-loader",
+        ],
       },
       {
         test: /\.js$/,
@@ -26,6 +30,7 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: ["@babel/preset-react"],
+            //plugins: ["react-loadable/babel"],
           },
         },
       },
@@ -43,11 +48,10 @@ module.exports = {
       clientsClaim: true,
       skipWaiting: true,
     }),
-    // new BundleAnalyzerPlugin(),
+    //new BundleAnalyzerPlugin(),
   ],
   devServer: {
     contentBase: path.join(__dirname, "build"),
-    https: true,
     compress: true,
     hot: true,
     port: 8080,
@@ -56,17 +60,5 @@ module.exports = {
     disableHostCheck: true,
     useLocalIp: true,
     historyApiFallback: true,
-  },
-  optimization: {
-    moduleIds: "hashed",
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all",
-        },
-      },
-    },
   },
 };

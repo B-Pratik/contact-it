@@ -1,10 +1,11 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import VCard from "vcf";
 import Button from "antd/es/button";
 import UploadOutlined from "@ant-design/icons/es/icons/UploadOutlined";
 
 import "antd/es/button/style/index.css";
+
+let VCard;
 
 const readFile = (file) => {
   return new Promise((resolve, reject) => {
@@ -18,6 +19,7 @@ const readFile = (file) => {
 const Home = () => {
   const uploadInput = useRef(null);
   const uploadClick = useCallback(() => uploadInput.current.click(), []);
+
   const onUpload = useCallback(
     async ({ target: { files: [file] = [] } = {} }) => {
       if (file) {
@@ -32,6 +34,13 @@ const Home = () => {
     },
     []
   );
+
+  useEffect(() => {
+    (async () => {
+      const { default: mod } = await import("vcf");
+      VCard = mod;
+    })();
+  }, []);
 
   return (
     <>
