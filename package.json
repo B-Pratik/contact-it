@@ -22,16 +22,26 @@
     "url": "https://github.com/B-Pratik/contact-it/issues"
   },
   "homepage": "https://github.com/B-Pratik/contact-it#readme",
-  "browserslist": [
-    "last 1 version"
-  ],
+  "browserslist": {
+    "development": [
+      "last 1 version",
+      "not IE 11",
+      "not IE_Mob 11"
+    ],
+    "production": [
+      "last 1 version",
+      "not IE 11",
+      "not IE_Mob 11"
+    ]
+  },
   "eslintConfig": {
     "env": {
       "browser": true,
       "node": true
     },
     "globals": {
-      "Promise": true
+      "Promise": true,
+      "Reflect": true
     },
     "extends": [
       "react",
@@ -61,14 +71,17 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
+    "@babel/core": "^7.11.4",
+    "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
-    "antd": "^4.5.4",
+    "@loadable/component": "^5.13.1",
+    "antd": "^4.6.1",
     "autoprefixer": "^9.8.6",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
+    "core-js": "^3.6.5",
     "css-loader": "^4.0.0",
     "cssnano": "^4.1.10",
     "eslint": "^7.7.0",
@@ -78,14 +91,14 @@
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.6",
-    "eslint-plugin-react-hooks": "^4.0.8",
+    "eslint-plugin-react-hooks": "^4.1.0",
     "html-webpack-plugin": "^4.3.0",
     "lodash-es": "^4.17.15",
+    "mini-css-extract-plugin": "^0.10.0",
     "postcss-loader": "^3.0.0",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0",
     "style-loader": "^1.2.1",
     "vcf": "^2.1.0",

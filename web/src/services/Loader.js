@@ -1,10 +1,10 @@
-import loadable from "react-loadable";
+import React from "react";
+import loadable from "@loadable/component";
 import Loading from "./Loading";
 
 const loader = (name) =>
-  loadable({
-    loader: () => import(`../components/${name}`),
-    loading: Loading,
+  loadable(() => import(`../components/${name}`), {
+    fallback: <Loading />,
   });
 
 export default loader;

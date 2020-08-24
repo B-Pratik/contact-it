@@ -2,6 +2,7 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { GenerateSW } = require("workbox-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 //   .BundleAnalyzerPlugin;
 
@@ -18,7 +19,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           { loader: "css-loader", options: { importLoaders: 1 } },
           "postcss-loader",
         ],
@@ -29,8 +30,17 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-react"],
-            //plugins: ["react-loadable/babel"],
+            babelrc: false,
+            presets: [
+              "@babel/preset-react",
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "usage",
+                  corejs: { version: 3, proposals: true },
+                },
+              ],
+            ],
           },
         },
       },
@@ -38,6 +48,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({}),
     new HtmlWebpackPlugin({
       template: "./index.html",
       inject: "body",
@@ -50,6 +61,29 @@ module.exports = {
     }),
     //new BundleAnalyzerPlugin(),
   ],
+  optimization: {
+    minimize: true,
+    splitChunks: {
+      minSize: 100000,
+      minChunks: 1,
+      cacheGroups: {
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all",
+          reuseExistingChunk: true,
+          priority: -10,
+        },
+        antD: {
+          test: /[\\/]node_modules[\\/](@ant-design|antd)[\\/]/,
+          name: "ant-d",
+          chunks: "all",
+          reuseExistingChunk: true,
+          priority: -9,
+        },
+      },
+    },
+  },
   devServer: {
     contentBase: path.join(__dirname, "build"),
     compress: true,
