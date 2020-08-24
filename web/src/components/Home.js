@@ -1,9 +1,15 @@
-import React, { useCallback, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import Button from "antd/es/button";
+import Layout from "antd/es/layout";
+import Space from "antd/es/space";
 import UploadOutlined from "@ant-design/icons/es/icons/UploadOutlined";
+import ContactsTable from "./ContactsTable";
+
+const { Header, Content } = Layout;
 
 import "antd/es/button/style/index.css";
+import "antd/es/layout/style/index.css";
+import "antd/es/space/style/index.css";
 
 let VCard;
 
@@ -18,18 +24,15 @@ const readFile = (file) => {
 
 const Home = () => {
   const uploadInput = useRef(null);
+  const [contacts, setContacts] = useState([]);
   const uploadClick = useCallback(() => uploadInput.current.click(), []);
 
   const onUpload = useCallback(
     async ({ target: { files: [file] = [] } = {} }) => {
-      if (file) {
+      if (file && VCard) {
         const content = await readFile(file);
         var cards = VCard.parse(content);
-        //const card = new VCard().parse(content);
-        console.log(
-          "AA",
-          cards.filter(({ data: { tel } }) => tel)
-        );
+        setContacts(cards.filter(({ data: { tel } }) => tel));
       }
     },
     []
@@ -43,21 +46,31 @@ const Home = () => {
   }, []);
 
   return (
-    <>
-      <Button onClick={uploadClick}>
-        <UploadOutlined /> Upload contacts
-      </Button>
-      <input
-        type="file"
-        accept=".vcf"
-        onChange={onUpload}
-        ref={uploadInput}
-        style={{ display: "none" }}
-      />
-      <p>
-        <Link to="/product">Product</Link>
-      </p>
-    </>
+    <Layout>
+      <Header
+        className="header"
+        style={{ position: "fixed", zIndex: 1, width: "100%" }}
+      >
+        <Space>
+          <Button onClick={uploadClick}>
+            <UploadOutlined /> Upload contacts
+          </Button>
+          <input
+            type="file"
+            accept=".vcf"
+            onChange={onUpload}
+            ref={uploadInput}
+            style={{ display: "none" }}
+          />
+        </Space>
+      </Header>
+      <Content
+        className="site-layout"
+        style={{ padding: "0 50px", marginTop: 64 }}
+      >
+        <ContactsTable contacts={contacts} />
+      </Content>
+    </Layout>
   );
 };
 export default Home;

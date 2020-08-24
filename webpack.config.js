@@ -86,6 +86,7 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, "build"),
+    overlay: true,
     compress: true,
     hot: true,
     port: 8080,
