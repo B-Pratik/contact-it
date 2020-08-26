@@ -1,49 +1,38 @@
-import React, { useCallback, useRef, useEffect, useState } from "react";
-import Button from "antd/es/button";
+import React, { useState, useCallback } from "react";
 import Layout from "antd/es/layout";
 import Space from "antd/es/space";
-import UploadOutlined from "@ant-design/icons/es/icons/UploadOutlined";
+import Input from "antd/es/input";
+
 import ContactsTable from "./ContactsTable";
+import ImportContacts from "./ImportContacts";
 
 const { Header, Content } = Layout;
+const { Search } = Input;
 
-import "antd/es/button/style/index.css";
 import "antd/es/layout/style/index.css";
 import "antd/es/space/style/index.css";
-
-let VCard;
-
-const readFile = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (event) => resolve(event.target.result);
-    reader.onerror = (error) => reject(null);
-    reader.readAsText(file, "utf-8");
-  });
-};
+import "antd/es/input/style/index.css";
 
 const Home = () => {
-  const uploadInput = useRef(null);
   const [contacts, setContacts] = useState([]);
-  const uploadClick = useCallback(() => uploadInput.current.click(), []);
+  const [filteredContacts, setFiltered] = useState([]);
 
-  const onUpload = useCallback(
-    async ({ target: { files: [file] = [] } = {} }) => {
-      if (file && VCard) {
-        const content = await readFile(file);
-        var cards = VCard.parse(content);
-        setContacts(cards.filter(({ data: { tel } }) => tel));
+  const onSearch = useCallback(
+    (value = "") => {
+      if (value.trim().length > 0) {
+        const filtered = contacts.filter((contact) =>
+          Object.values(contact).some(
+            (val) =>
+              val && val.toString().toLowerCase().includes(value.toLowerCase())
+          )
+        );
+        setFiltered(filtered);
+      } else {
+        setFiltered(contacts);
       }
     },
-    []
+    [contacts]
   );
-
-  useEffect(() => {
-    (async () => {
-      const { default: mod } = await import("vcf");
-      VCard = mod;
-    })();
-  }, []);
 
   return (
     <Layout>
@@ -51,26 +40,31 @@ const Home = () => {
         className="header"
         style={{ position: "fixed", zIndex: 1, width: "100%" }}
       >
-        <Space>
-          <Button onClick={uploadClick}>
-            <UploadOutlined /> Upload contacts
-          </Button>
-          <input
-            type="file"
-            accept=".vcf"
-            onChange={onUpload}
-            ref={uploadInput}
-            style={{ display: "none" }}
+        <Space align="center">
+          <ImportContacts
+            onImport={(imported) => {
+              setContacts(imported);
+              setFiltered(imported);
+            }}
+          />
+          <Search
+            placeholder="search"
+            onSearch={onSearch}
+            style={{ width: 200 }}
+            disabled={contacts.length === 0}
+            allowClear
           />
         </Space>
       </Header>
+
       <Content
         className="site-layout"
         style={{ padding: "0 50px", marginTop: 64 }}
       >
-        <ContactsTable contacts={contacts} />
+        <ContactsTable contacts={filteredContacts} />
       </Content>
     </Layout>
   );
 };
+
 export default Home;

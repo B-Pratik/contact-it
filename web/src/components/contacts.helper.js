@@ -6,8 +6,8 @@ const fields = {
   n: undefined,
 };
 
-const getProperties = (vCard, properties) => {
-  const props = { ...fields, highestSpan: 1 };
+const getProperties = (vCard, properties, i) => {
+  const props = { ...fields, highestSpan: 1, key: i };
   properties.forEach((prop) => {
     if (vCard.get(prop)) {
       let value = vCard.get(prop).valueOf();
@@ -23,7 +23,7 @@ const getProperties = (vCard, properties) => {
   return props;
 };
 
-const vCardMapper = (vCard) => getProperties(vCard, Object.keys(fields));
+const vCardMapper = (vCard, i) => getProperties(vCard, Object.keys(fields), i);
 
 // const generateSpan = ({ highestSpan, ...rest }) => {
 //   const entries = [];
