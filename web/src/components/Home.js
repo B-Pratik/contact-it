@@ -2,9 +2,12 @@ import React, { useState, useCallback } from "react";
 import Layout from "antd/es/layout";
 import Space from "antd/es/space";
 import Input from "antd/es/input";
+import Button from "antd/es/button";
+import PlusOutlined from "@ant-design/icons/es/icons/PlusOutlined";
 
 import ContactsTable from "./ContactsTable";
 import ImportContacts from "./ImportContacts";
+import ContactDrawer from "./ContactDrawer";
 
 const { Header, Content } = Layout;
 const { Search } = Input;
@@ -12,10 +15,12 @@ const { Search } = Input;
 import "antd/es/layout/style/index.css";
 import "antd/es/space/style/index.css";
 import "antd/es/input/style/index.css";
+import "antd/es/button/style/index.css";
 
 const Home = () => {
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFiltered] = useState([]);
+  const [isDrawerVisible, setDrawerVisibility] = useState(false);
 
   const onSearch = useCallback(
     (value = "") => {
@@ -54,6 +59,9 @@ const Home = () => {
             disabled={contacts.length === 0}
             allowClear
           />
+          <Button type="primary" onClick={setDrawerVisibility.bind(null, true)}>
+            <PlusOutlined /> Add Contact
+          </Button>
         </Space>
       </Header>
 
@@ -61,6 +69,9 @@ const Home = () => {
         className="site-layout"
         style={{ padding: "0 50px", marginTop: 64 }}
       >
+        {isDrawerVisible && (
+          <ContactDrawer onClose={setDrawerVisibility.bind(null, false)} />
+        )}
         <ContactsTable contacts={filteredContacts} />
       </Content>
     </Layout>
