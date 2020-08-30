@@ -7,15 +7,12 @@ const fields = {
 };
 
 const getProperties = (vCard, properties, i) => {
-  const props = { ...fields, highestSpan: 1, key: i };
+  const props = { ...fields, key: i };
   properties.forEach((prop) => {
     if (vCard.get(prop)) {
       let value = vCard.get(prop).valueOf();
       if (Array.isArray(value)) {
         value = value.map((val) => val.valueOf());
-        if (value.length > props.highestSpan) {
-          props.highestSpan = value.length;
-        }
       }
       props[prop] = value;
     }
@@ -23,42 +20,23 @@ const getProperties = (vCard, properties, i) => {
   return props;
 };
 
-const vCardMapper = (vCard, i) => getProperties(vCard, Object.keys(fields), i);
+export const vCardMapper = (contacts = []) =>
+  contacts.map((vCard, i) => getProperties(vCard, Object.keys(fields), i));
 
-// const generateSpan = ({ highestSpan, ...rest }) => {
-//   const entries = [];
-//   // for (let i = 1; i <= highestSpan; i++) {
-//   //   const toPush = {};
-//   //   for (const key in rest) {
-//   //     if (rest.hasOwnProperty(key)) {
-//   //       const value = Array.isArray(rest[key]) ? rest[key][i - 1] : rest[key];
-//   //       const valueLength = Array.isArray(rest[key]) ? rest[key].length : 1;
-//   //       const factor = Math.floor(highestSpan / valueLength);
-//   //       const rowSpan = highestSpan - i * factor >= 0 ? factor : 0;
-//   //       toPush[key] = { value, rowSpan };
-//   //     }
-//   //   }
-//   //   entries.push(toPush);
-//   // }
-//   // for (let i = 0; i < highestSpan; i++) {
-//   const toPush = {};
-//   for (const key in rest) {
-//     if (rest.hasOwnProperty(key)) {
-//       const value = rest[key];
-//       const rowSpan = 1; // highestSpan;
-//       toPush[key] = { value, rowSpan };
-//     }
-//     // }
-//     entries.push(toPush);
-//   }
-//   return entries;
-// };
-
-export const contactsMapper = (contacts = []) => {
-  //const mappedContactsWithSpan = [];
-  const mappedContacts = contacts.map(vCardMapper);
-  // mappedContacts.forEach((mappedContact) => {
-  //   mappedContactsWithSpan.push(...generateSpan(mappedContact));
-  // });
-  return mappedContacts;
+export const contactMapper = (contact, index) => {
+  const props = { ...fields, key: index };
+  Object.keys(contact).forEach((prop) => {
+    let value = contact[prop];
+    if (Array.isArray(value)) {
+      value = value.map((entry) => {
+        if (typeof entry === "string") {
+          return entry;
+        }
+        const { [prop]: val } = entry;
+        return val;
+      });
+    }
+    props[prop] = value;
+  });
+  return props;
 };

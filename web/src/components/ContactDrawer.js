@@ -1,131 +1,153 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Drawer from "antd/es/drawer";
 import Form from "antd/es/form";
 import Input from "antd/es/input";
 import Row from "antd/es/row";
-import Select from "antd/es/select";
+import Checkbox from "antd/es/checkbox";
 import Col from "antd/es/col";
 import Button from "antd/es/button";
-
-const { Option } = Select;
+import PlusCircleOutlined from "@ant-design/icons/es/icons/PlusCircleOutlined";
+import MinusCircleOutlined from "@ant-design/icons/es/icons/MinusCircleOutlined";
 
 import "antd/es/drawer/style/index.css";
 import "antd/es/form/style/index.css";
 import "antd/es/input/style/index.css";
 import "antd/es/grid/style/index.css";
-import "antd/es/select/style/index.css";
+import "antd/es/checkbox/style/index.css";
 import "antd/es/button/style/index.css";
 
-const ContactDrawer = ({ onClose }) => {
+const FormList = ({ type, notRequired = false, id = type }) => {
+  const addRef = useRef(null);
+  const title = type.replace(/^\w/, (c) => c.toUpperCase());
+
+  useEffect(() => {
+    addRef.current();
+  }, []);
+
   return (
-    <Drawer
-      visible
-      destroyOnClose
-      title="Create a new account"
-      width={720}
-      onClose={onClose}
-    >
-      <Form layout="vertical" hideRequiredMark>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[{ required: true, message: "Please enter user name" }]}
-            >
-              <Input placeholder="Please enter user name" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="url"
-              label="Url"
-              rules={[{ required: true, message: "Please enter url" }]}
-            >
-              <Input
-                style={{ width: "100%" }}
-                addonBefore="http://"
-                addonAfter=".com"
-                placeholder="Please enter url"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="owner"
-              label="Owner"
-              rules={[{ required: true, message: "Please select an owner" }]}
-            >
-              <Select placeholder="Please select an owner">
-                <Option value="xiao">Xiaoxiao Fu</Option>
-                <Option value="mao">Maomao Zhou</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="type"
-              label="Type"
-              rules={[{ required: true, message: "Please choose the type" }]}
-            >
-              <Select placeholder="Please choose the type">
-                <Option value="private">Private</Option>
-                <Option value="public">Public</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              name="approver"
-              label="Approver"
-              rules={[
-                { required: true, message: "Please choose the approver" },
-              ]}
-            >
-              <Select placeholder="Please choose the approver">
-                <Option value="jack">Jack Ma</Option>
-                <Option value="tom">Tom Liu</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[
-                {
-                  required: true,
-                  message: "please enter url description",
-                },
-              ]}
-            >
-              <Input.TextArea
-                rows={4}
-                placeholder="please enter url description"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Button onClick={onClose}>Cancel</Button>
-          </Col>
-          <Col span={12}>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </Drawer>
+    <Form.List name={id}>
+      {(fields, { add, remove }) => {
+        addRef.current = add;
+        return (
+          <>
+            {fields.map((field, index) => (
+              <Row
+                key={index}
+                gutter={16}
+                align={index === 0 ? "middle" : "top"}
+              >
+                <Col span={20}>
+                  <Form.Item
+                    {...field}
+                    label={index === 0 ? title : ""}
+                    name={[field.name, id]}
+                    fieldKey={[field.fieldKey, id]}
+                    rules={
+                      notRequired
+                        ? []
+                        : [{ required: true, message: `Please enter ${type}` }]
+                    }
+                  >
+                    <Input placeholder={`Please enter ${type}`} />
+                  </Form.Item>
+                </Col>
+                <Col span={4}>
+                  {index === 0 && (
+                    <PlusCircleOutlined
+                      onClick={() => {
+                        add();
+                      }}
+                    />
+                  )}
+                  {index !== 0 && (
+                    <MinusCircleOutlined
+                      onClick={() => {
+                        remove(field.name);
+                      }}
+                    />
+                  )}
+                </Col>
+              </Row>
+            ))}
+          </>
+        );
+      }}
+    </Form.List>
   );
 };
+
+const ContactDrawer = ({ onClose, onAdd }) => (
+  <Drawer
+    visible
+    destroyOnClose
+    title="Add new contact"
+    width={500}
+    onClose={onClose}
+  >
+    <Form layout="vertical" requiredMark={false} onFinish={onAdd}>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form.Item
+            name="fn"
+            label="Name"
+            rules={[{ required: true, message: "Please enter user name" }]}
+          >
+            <Input placeholder="Please enter user name" />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <FormList type="number" id="tel" />
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <FormList type="email" notRequired />
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form.Item name="relation" label="Relation">
+            <Checkbox.Group>
+              <Checkbox value="relative" style={{ padding: "0 10px 10px 0" }}>
+                Relative
+              </Checkbox>
+              <Checkbox value="friend" style={{ padding: "0 10px 10px 0" }}>
+                Friend
+              </Checkbox>
+              <Checkbox value="other" style={{ padding: "0 10px 10px 0" }}>
+                Other
+              </Checkbox>
+            </Checkbox.Group>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form.Item name="adr" label="Address">
+            <Input.TextArea
+              rows={4}
+              allowClear
+              autoSize={{ minRows: 4, maxRows: 7 }}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={3}>
+          <Button onClick={onClose}>Cancel</Button>
+        </Col>
+        <Col span={3} offset={3}>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
+          </Form.Item>
+        </Col>
+      </Row>
+    </Form>
+  </Drawer>
+);
+
 export default ContactDrawer;

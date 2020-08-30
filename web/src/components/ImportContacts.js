@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from "react";
 import Button from "antd/es/button";
 import UploadOutlined from "@ant-design/icons/es/icons/UploadOutlined";
-import { contactsMapper } from "./contacts.helper";
+import { vCardMapper } from "./contacts.helper";
 
 import "antd/es/button/style/index.css";
 
@@ -24,7 +24,7 @@ const ImportContacts = ({ onImport }) => {
       if (file && VCard) {
         const content = await readFile(file);
         var cards = VCard.parse(content);
-        onImport(contactsMapper(cards.filter(({ data: { tel } }) => tel)));
+        onImport(vCardMapper(cards.filter(({ data: { tel } }) => tel)));
       }
     },
     [onImport]

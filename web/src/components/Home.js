@@ -16,27 +16,53 @@ import "antd/es/layout/style/index.css";
 import "antd/es/space/style/index.css";
 import "antd/es/input/style/index.css";
 import "antd/es/button/style/index.css";
+import { contactMapper } from "./contacts.helper";
+
+let contacts = [];
+let currentSearch = "";
 
 const Home = () => {
-  const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFiltered] = useState([]);
   const [isDrawerVisible, setDrawerVisibility] = useState(false);
 
-  const onSearch = useCallback(
-    (value = "") => {
-      if (value.trim().length > 0) {
-        const filtered = contacts.filter((contact) =>
-          Object.values(contact).some(
-            (val) =>
-              val && val.toString().toLowerCase().includes(value.toLowerCase())
-          )
-        );
-        setFiltered(filtered);
-      } else {
-        setFiltered(contacts);
-      }
+  const doSearch = useCallback(() => {
+    if (currentSearch && currentSearch.trim().length > 0) {
+      const filtered = contacts.filter((contact) =>
+        Object.values(contact).some(
+          (val) =>
+            val &&
+            val.toString().toLowerCase().includes(currentSearch.toLowerCase())
+        )
+      );
+      setFiltered(filtered);
+    } else {
+      setFiltered([...contacts]);
+    }
+  }, []);
+
+  const onImport = useCallback(
+    (_contacts) => {
+      contacts = _contacts;
+      doSearch();
     },
-    [contacts]
+    [doSearch]
+  );
+
+  const onAddContact = useCallback(
+    (contact) => {
+      contacts.push(contactMapper(contact, contacts.length));
+      doSearch();
+      setTimeout(() => setDrawerVisibility(false), 100);
+    },
+    [doSearch]
+  );
+
+  const onSearch = useCallback(
+    (val = "") => {
+      currentSearch = val;
+      doSearch();
+    },
+    [doSearch]
   );
 
   return (
@@ -46,12 +72,7 @@ const Home = () => {
         style={{ position: "fixed", zIndex: 1, width: "100%" }}
       >
         <Space align="center">
-          <ImportContacts
-            onImport={(imported) => {
-              setContacts(imported);
-              setFiltered(imported);
-            }}
-          />
+          <ImportContacts onImport={onImport} />
           <Search
             placeholder="search"
             onSearch={onSearch}
@@ -70,7 +91,10 @@ const Home = () => {
         style={{ padding: "0 50px", marginTop: 64 }}
       >
         {isDrawerVisible && (
-          <ContactDrawer onClose={setDrawerVisibility.bind(null, false)} />
+          <ContactDrawer
+            onClose={setDrawerVisibility.bind(null, false)}
+            onAdd={onAddContact}
+          />
         )}
         <ContactsTable contacts={filteredContacts} />
       </Content>
